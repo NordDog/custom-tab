@@ -7,13 +7,14 @@
       item-text="VALUE"
       item-value="ID"
       outlined
+      :multiple="fieldData.multiple"
     ></v-select>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'select',
+  name: 'app_select',
   props:{
     fieldData: Object
   },

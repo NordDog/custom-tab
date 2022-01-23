@@ -1,20 +1,17 @@
 <template>
   <div>
-    <v-autocomplete
+    <v-file-input
       :label="fieldData.title"
-      :items="fieldData.items"
-      item-text="text"
-      item-value="value"
-      :multiple="fieldData.multiple"
       dense
       outlined
-    ></v-autocomplete>
+      :multiple="fieldData.multiple"
+    ></v-file-input>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'autocomplete',
+  name: 'app_string',
   props:{
     fieldData: Object
   },
@@ -22,6 +19,6 @@ export default {
     return{
 
     }
-  },
+  }
 }
 </script>

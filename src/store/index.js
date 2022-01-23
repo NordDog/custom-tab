@@ -9,48 +9,9 @@ export default new Vuex.Store({
     testFields:[//TODO:name - название поля в битрикс, text - название поля в интерфейсе
     ],
     buttonPanel: {
-      claim:[
-        {
-          text:'Причинение ущерба',
-          name:'textAreaBtn',
-          id:'1'
-        },
-        {
-          text:'Нарушение',
-          name:'secondBtd',
-          id:'2'
-        },
-        {
-          text:'Иное',
-          name:'textAreaBtn',
-          id:'3'
-        },
-      ],
-      act:[
-        {
-          text:'С работника полностью',
-          name:'firstBtn',
-          id:'1'
-        },
-        {
-          text:'На расходы объекта',
-          name:'secondBtd',
-          id:'2'
-        },
-        {
-          text:'И на работника/сотрудника и на расходы объекта',
-          name:'thirdBtn',
-          id:'3'
-        },
-        {
-          text:'С менеджера полностью',
-          name:'fourthBtn',
-          id:'4'
-        },
-      ]
     },
     selectedBtn: 1,
-    type:'claim'
+    type:'Акт'
   },
   mutations: {
     CHANGE_SELECTED_BTN_IN_STATE(state, val){
@@ -61,6 +22,9 @@ export default new Vuex.Store({
     },
     SET_BTNPNL(state, btns){
       state.buttonPanel = btns;
+    },
+    AUTOSELECT_TAB(state, value){
+      state.selectedBtn = value;
     }
   },
   actions: {
@@ -79,8 +43,9 @@ export default new Vuex.Store({
           'Content-Type':'application/x-www-form-urlencoded'
         }
       }).then(response=>{
-        commit('SET_FIELDS', response.data.fields);
-        commit('SET_BTNPNL', response.data.btns)
+        commit('SET_FIELDS', response.data.blocks);
+        commit('SET_BTNPNL', response.data.btns);
+        commit('AUTOSELECT_TAB', response.data.btns.items[0].ID);//TODO: переписать на постановку выбранного в поле значения
       });
     }
   },
@@ -89,7 +54,7 @@ export default new Vuex.Store({
       return state.testFields;
     },
     GET_BUTTONS_FOR_PANEL(state){
-      return state.buttonPanel[state.type];
+      return state.buttonPanel;
     },
     GET_SELECTED_BUTTON(state){
       return state.selectedBtn;
