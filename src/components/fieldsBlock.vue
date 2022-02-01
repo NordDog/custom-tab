@@ -1,6 +1,6 @@
 <template>
-  <div class="wrap">
-    <span class="block-title">{{name}}</span>
+  <div class="mwswrap">
+    <span class="mwsblock-title">{{name}}</span>
     <fields-father v-for="field of fields" :key="field.id"
       :fieldDesc=field
     />
@@ -17,30 +17,23 @@ export default {
   props:{
     name:String,
     fields: Array
-  },
-  data() {
-      return{
-
-      }
-  },
-  mounted(){
-    //console.log(this.fields);
   }
 }
 </script>
 <style scoped>
-  .wrap{
+  .mwswrap{
     position: relative;
-    border:1px solid gray;
     border-radius: 5px;
     padding:10px;
     margin-bottom: 20px;
-    background-color: snow;
+    background-color: lightgrey;
   }
-  .block-title{
+  .mwsblock-title{
     position: absolute;
     top: -15px;
-    background: snow;
+    background: lightgrey;
     text-transform: capitalize;
+    border-radius: 5px;
+    padding: 0px 5px;
   }
 </style>

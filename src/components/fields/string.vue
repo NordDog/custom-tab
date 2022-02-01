@@ -2,26 +2,36 @@
   <div class="position:relative;">
     <v-text-field
       :label="fieldData.title"
-      v-model="fieldValue[0]"
+      v-model="value[0]"
       dense
       outlined
+      background-color="white"
+      @input="setNewVal"
+      :readonly='readOnly'
     ></v-text-field>
-    <v-text-field v-for="num of repeat" :key='num' 
-      class="addit"
-      v-model="fieldValue[num]"
-      dense
-      outlined
-    ></v-text-field>
-    <p 
-      v-if="fieldData.multiple"
-      class="fakelink" 
-      @click="repeat++">
-      добавить
-    </p>
+    <div v-if="value.length > 1">
+      <v-text-field v-for="num of value.length-1" :key='num' 
+        class="mwsaddit"
+        v-model="value[num]"
+        dense
+        outlined
+        background-color="white"
+        @input="setNewVal"
+        :readonly='readOnly'
+      ></v-text-field>
+      <p 
+        v-if="fieldData.multiple && !readOnly"
+        class="fakelink" 
+        @click="value.push([])">
+        добавить
+      </p>
+    </div>
+
   </div>
 </template>
 
 <script>
+  import {mapGetters} from 'vuex';
   export default {
     name: 'string',
     props:{
@@ -29,9 +39,29 @@
     },
     data(){
       return {
-        repeat: 0,
-        fieldValue: [],
-        v:[]
+      }
+    },
+    computed:{
+      value:{
+        get(){
+          let res =  this.$store.getters.GET_FIELD_VALUE(this.fieldData.code),
+          result = [];
+          if(typeof res == 'string') {
+            result.push(res);
+          }
+          else if(Array.isArray(res)){
+            result = res;
+          }
+          return result; 
+        },
+      },
+      ...mapGetters({
+        readOnly:'GET_READONLY'
+      })
+    },
+    methods:{
+      setNewVal(){
+        this.$store.dispatch('FIELD_VALUE_SETTER', {name:this.fieldData.code, value: this.fieldData.multiple ? this.value  : this.value[0]});
       }
     }
   }
@@ -41,12 +71,11 @@
   position: absolute;
   bottom: -5px;
   right: 10px;
-  background-color: snow;
   text-decoration: underline;
   color: blue;
   cursor: pointer;
 }
-.addit{
+.mwsaddit{
   margin-top: -20px !important;
 }
 </style>

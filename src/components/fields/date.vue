@@ -1,10 +1,10 @@
 <template>
   <div>
       <v-menu
-        ref="menu"
+        :disabled='readonly'
         v-model="menu"
         :close-on-content-click="false"
-        :return-value.sync="date"
+        :nudge-right="40"
         transition="scale-transition"
         offset-y
         min-width="auto"
@@ -19,36 +19,24 @@
             outlined
             v-bind="attrs"
             v-on="on"
+            background-color="white"
           ></v-text-field>
         </template>
         <v-date-picker
           v-model="date"
           no-title
+          @input="menu = false"
           scrollable
           locale="ru-RU"
           first-day-of-week="1"
         >
-          <v-spacer></v-spacer>
-          <v-btn
-            text
-            color="primary"
-            @click="menu = false"
-          >
-            Отменить
-          </v-btn>
-          <v-btn
-            text
-            color="primary"
-            @click="$refs.menu.save(date)"
-          >
-            OK
-          </v-btn>
         </v-date-picker>
       </v-menu>
   </div>
 </template>
 
 <script>
+import {mapGetters} from 'vuex';
 export default {
   name: 'date',
   props:{
@@ -56,13 +44,31 @@ export default {
   },
   data() {
     return{
-      date: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substring(0,10),
       menu: false,
     }
   },
   filters:{
     dateToLocal(date){
       return date.split('-').reverse().join('.');
+    }
+  },
+  computed:{
+    date:{
+      get(){
+        return this.$store.getters.GET_FIELD_VALUE(this.fieldData.code) ? 
+          this.$store.getters.GET_FIELD_VALUE(this.fieldData.code).split('.').reverse().join('-'):'';
+      },
+      set(val){
+        this.$store.dispatch('FIELD_VALUE_SETTER', {name:this.fieldData.code, value: val.split('-').reverse().join('.')});
+      }
+    },
+    ...mapGetters({
+      readonly:'GET_READONLY'
+    })
+  },
+  methods:{
+    saveData(){
+
     }
   }
 }

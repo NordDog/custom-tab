@@ -11,7 +11,9 @@ export default new Vuex.Store({
     buttonPanel: {
     },
     selectedBtn: 1,
-    type:'Акт'
+    data: {},
+    readOnly: true,
+    files:{}
   },
   mutations: {
     CHANGE_SELECTED_BTN_IN_STATE(state, val){
@@ -25,6 +27,19 @@ export default new Vuex.Store({
     },
     AUTOSELECT_TAB(state, value){
       state.selectedBtn = value;
+    },
+    SET_DATA(state, value){
+      state.data = value;
+    },
+    SET_FIELD_VALUE(state, data){
+      state.data[data.name] = data.value;
+    },
+    READONLY_TOGGLE(state){
+      state.readOnly = state.readOnly?false:true;
+    },
+    ADD_FILES(state, data){
+      state.files[data.name] = data.value;
+      //this.$set(state.files, data.name, data.value);
     }
   },
   actions: {
@@ -32,9 +47,11 @@ export default new Vuex.Store({
       commit('CHANGE_SELECTED_BTN_IN_STATE', val.val);
     },
     async GET_ALL_FIELDS_FROM_SERVER({commit}){
+      let id = window.location.href.split('/').reverse()[1];
       let data = new FormData();
-      data.append('key','j1xTeoRyYZUlf6J9qm7S8hz9vEQWOUcc');
-      data.append('action','getAllFields');
+      data.append('key', 'j1xTeoRyYZUlf6J9qm7S8hz9vEQWOUcc');
+      data.append('action', 'getAllFields');
+      data.append('id', id);
       axios({
         method:'post',
         url:'https://spets.company/local/custom-tab/ajax.php',
@@ -45,8 +62,18 @@ export default new Vuex.Store({
       }).then(response=>{
         commit('SET_FIELDS', response.data.blocks);
         commit('SET_BTNPNL', response.data.btns);
+        /*if(id > 0)*/commit('SET_DATA', response.data.data);
         commit('AUTOSELECT_TAB', response.data.btns.items[0].ID);//TODO: переписать на постановку выбранного в поле значения
       });
+    },
+    FIELD_VALUE_SETTER({commit}, data){
+      commit('SET_FIELD_VALUE', data);
+    },
+    TOGGLE({commit}){
+      commit('READONLY_TOGGLE');
+    },
+    FILE_FIELD_VALUE_SETTER({commit}, data){
+      commit('ADD_FILES', data);
     }
   },
   getters: {
@@ -58,6 +85,18 @@ export default new Vuex.Store({
     },
     GET_SELECTED_BUTTON(state){
       return state.selectedBtn;
+    },
+    GET_FIELD_VALUE: state=>fieldName=>{
+      return state.data[fieldName];
+    },
+    GET_DATA(state){
+      return state.data;
+    },
+    GET_READONLY(state){
+      return state.readOnly;
+    },
+    GET_FILES(state){
+      return state.files;
     }
   }
 })
