@@ -19,11 +19,13 @@ import {mapGetters} from 'vuex';
 export default {
   name: 'buttonsPanel',
   props:{
-    buttons: Array
+    buttons: Array,
+    code: String
   },
   methods:{
     changeBtnValue(val){
       this.btn = val;
+      this.$store.dispatch('FIELD_VALUE_SETTER', {name:this.code, value: val});
       this.$store.dispatch('CHANGE_SELECTED_BTN', {val: val});
     }
   },

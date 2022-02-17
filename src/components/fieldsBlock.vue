@@ -1,22 +1,32 @@
 <template>
   <div class="mwswrap">
     <span class="mwsblock-title">{{name}}</span>
-    <fields-father v-for="field of fields" :key="field.id"
-      :fieldDesc=field
-    />
+    <div v-for="field of fields" :key="field.id">
+      <buttons-panel v-if="field.advancedType == 'btnpnl'"
+        :buttons="field.items"
+        :code="field.code"
+      />
+      <fields-father v-else
+        :fieldDesc=field
+      />
+    </div>
   </div>
 </template>
 
 <script>
 
 import fieldsFather from './fieldsFather'
+import buttonsPanel from './buttonsPanel'
 
 export default {
-  components: { fieldsFather },
+  components: { 
+    fieldsFather, 
+    buttonsPanel  
+  },
   name: 'fieldsBlock',
   props:{
     name:String,
-    fields: Array
+    fields: Object
   }
 }
 </script>

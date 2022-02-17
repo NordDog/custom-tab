@@ -61,9 +61,8 @@ export default new Vuex.Store({
         }
       }).then(response=>{
         commit('SET_FIELDS', response.data.blocks);
-        commit('SET_BTNPNL', response.data.btns);
         /*if(id > 0)*/commit('SET_DATA', response.data.data);
-        commit('AUTOSELECT_TAB', response.data.btns.items[0].ID);//TODO: переписать на постановку выбранного в поле значения
+        //commit('AUTOSELECT_TAB', String(response.data.data[response.data.btns.code]));//TODO: переписать 
       });
     },
     FIELD_VALUE_SETTER({commit}, data){

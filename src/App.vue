@@ -2,17 +2,16 @@
   <v-app>
     <div class="pa-5" style="position:relative;">
       <p class="mwsChange" v-if="readOnly">
-        <span
-          @click="toggler"
-        >Изменить</span>
+        <span @click="toggler">Изменить</span>
       </p>
-      <buttons-panel
-        :buttons="btnPanelElems.items"
-      />
-      <div v-for="(field, key) of allfields" :key="field.id">
-        <fields-block
-          :name=key
-          :fields=field
+      <div v-for="(item, index) of allfields" :key="index">
+        <fields-block v-if="item.blockName"
+          :name=item.blockName
+          :fields=item.fields
+        />
+        <fields-father v-else
+          :key="item.code"
+          :fieldDesc="item"
         />
       </div>
       <div class="mwsbtnsfooter" v-if="!readOnly">
@@ -23,7 +22,6 @@
         >сохранить</v-btn>
         <v-btn class="ml-5" @click="toggler">Отменить</v-btn>
       </div>
-
     </div>
   </v-app>
 </template>
@@ -31,7 +29,7 @@
 <script>
 
 import FieldsBlock from './components/fieldsBlock';
-import buttonsPanel from './components/buttonsPanel';
+import fieldsFather from './components/fieldsFather';
 import {mapGetters} from 'vuex'; 
 import axios from 'axios';
 
@@ -39,7 +37,7 @@ export default {
   name: 'App',
   components: {
     FieldsBlock,
-    buttonsPanel
+    fieldsFather
   },
   data() {
     return{
@@ -82,7 +80,15 @@ export default {
         headers:{
           'Content-Type':'application/x-www-form-urlencoded'
         }
-      })
+      }).then(response=>{
+          if(response.status !== 200){
+            alert('При сохранении произошла ошибка! Сообщите разработчику.');
+            return;
+          }
+          this.$store.dispatch('TOGGLE');
+          this.$store.dispatch('GET_ALL_FIELDS_FROM_SERVER');
+        }
+      )
     },
     toggler(){
       this.$store.dispatch('TOGGLE');
@@ -91,8 +97,6 @@ export default {
   computed:{
     ...mapGetters({
       allfields: 'GET_ALL_FIELDS',
-      btnPanelElems: 'GET_BUTTONS_FOR_PANEL',
-      btnPanelValue: 'GET_SELECTED_BUTTON',
       elem: 'GET_DATA',
       readOnly:'GET_READONLY'
     })
