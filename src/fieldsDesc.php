@@ -68,16 +68,90 @@ $tabs = array(
           'order' => 2
         ),
         'UF_CRM_1_1642581259' => array( //сумма
-          'order' => 3
+          'order' => 3,
+          'dependences'=>array(
+            'field'=>'UF_CRM_1_1642581077',
+            'values'=>array('2824', '2825', '2826')
+          )
         ),
-        'UF_CRM_1_1642581875' => array( //сотрудник - сумма
-          'order' => 4
+        'UF_CRM_1_1642582057'=>array( //менеджер <-> работник
+          'order' => 4,
+          'dependences' => array(
+            'field'=>'UF_CRM_1_1642581077',
+            'values'=>array('2826')
+          )
         ),
-        'UF_CRM_1_1642582057' => array( //сотрудник
-          'order' => 5
+        'UF_CRM_1_1642581875' => array( //работник - сумма
+          'order' => 5,
+          'advancedType'=>array(
+            'type'=>'app_row',
+            'cells'=>array(
+              array(
+                'fieldType'=>'string',
+                'cols'=>2
+              ),
+              array(
+                'fieldType'=>'string',
+                'cols'=>1
+              )
+            )
+          ),
+          'dependences'=>array(
+            'field'=>'UF_CRM_1_1642581077',
+            'values'=>array('2824', '2826'),
+            'if'=>array(
+              'condition'=>'2826',
+              'field'=>'UF_CRM_1_1642582057',
+              'values'=>array('2829')
+            )
+          )
+        ),
+        'UF_CRM_1_1642999691' => array( //менеджер - сумма
+          'order' => 6,
+          'advancedType'=>array(
+            'type'=>'app_row',
+            'cells'=>array(
+              array(
+                'fieldType'=>'autocomplete',
+                'items'=>'employers',
+                'cols'=>2
+              ),
+              array(
+                'fieldType'=>'string',
+                'cols'=>1
+              )
+            ),
+          ),
+          'dependences'=>array(
+            'field'=>'UF_CRM_1_1642581077',
+            'values'=>array('2827', '2826'),
+            'if'=>array(
+              'condition'=>'2826',
+              'field'=>'UF_CRM_1_1642582057',
+              'values'=>array('2828')
+            )
+          )
         ),
         'UF_CRM_1_1642581894' => array( //объект - сумма
-          'order' => 6
+          'order' => 7,
+          'advancedType'=>array(
+            'type'=>'app_row',
+            'cells'=>array(
+              array(
+                'fieldType'=>'autocomplete',
+                'items'=>'IBLOCK_ID:36',
+                'cols'=>2
+              ),
+              array(
+                'fieldType'=>'string',
+                'cols'=>1
+              )
+            )
+          ),
+          'dependences'=>array(
+            'field'=>'UF_CRM_1_1642581077',
+            'values'=>array('2825', '2826'),
+          )
         ),
       )
     ),
@@ -127,13 +201,37 @@ $tabs = array(
           'order' => 1
         ),
         'UF_CRM_1_1642580508' => array( //тип
-          'order' => 2
+          'order' => 2,
+          'dependences' => array(
+            'field'=>'UF_CRM_1_1645099677',
+            'values'=>array(true, 'true', 1, '1')
+          )
         ),
         'UF_CRM_1_1642580547' => array( //менеджер
-          'order' => 3
+          'order' => 3,
+          'dependences' => array(
+            array(
+              'field'=>'UF_CRM_1_1645099677',
+              'values'=>array(true, 'true', 1, '1')
+            ),
+            array(
+              'field'=>'UF_CRM_1_1642580508',
+              'values'=>array('2820')
+            )
+          )
         ),
         'UF_CRM_1_1642580573' => array( //сотрудник
-          'order' => 4
+          'order' => 4,
+          'dependences' => array(
+            array(
+              'field'=>'UF_CRM_1_1645099677',
+              'values'=>array(true, 'true', 1, '1')
+            ),
+            array(
+              'field'=>'UF_CRM_1_1642580508',
+              'values'=>array('2821')
+            )
+          )
         )
       )
     ),
@@ -147,9 +245,11 @@ $tabs = array(
       'order' => array('act'=>8, 'claim'=>8)
     ),
     'UF_CRM_1_1642580600' => array( //вложение
-      'order' => array('act'=>10)
+      'order' => array('act'=>10, 'claim'=>10)
     ),
   )
 );
 
 $result = COption::SetOptionString('main', 'claimFieldsDescription', serialize($tabs));
+
+print_r($result);

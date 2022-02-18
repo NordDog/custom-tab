@@ -52,24 +52,45 @@
       }
     },
     computed:{
-      dependencyValue: {
+      dependencyValues: {
         get(){
-          let res = [];
+          let res = {};
           if(Object.keys(this.fieldDesc).includes('dependences')){
-            res = this.$store.getters.GET_FIELD_VALUE(this.fieldDesc.dependences.field);
+            if(Array.isArray(this.fieldDesc.dependences)){
+              for(let dependence of this.fieldDesc.dependences){
+                this.$set(res, dependence.field, String(this.$store.getters.GET_FIELD_VALUE(dependence.field)))
+              }
+            }
+            else res = String(this.$store.getters.GET_FIELD_VALUE(this.fieldDesc.dependences.field));
           }
-          return String(res);
+          return res;
         }
       },
       show(){
         let result = true;
-        if(this.dependencyValue){
-          result = (!Object.keys(this.fieldDesc).includes('dependences')||(Object.keys(this.fieldDesc).includes('dependences') && this.fieldDesc.dependences.values.includes(this.dependencyValue)))
+        if(Object.keys(this.dependencyValues).length !== 0){
+          if(typeof this.dependencyValues != 'object'){
+            if(Object.keys(this.fieldDesc.dependences).includes('if') &&
+               (!Object.keys(this.fieldDesc).includes('dependences')||
+                (Object.keys(this.fieldDesc).includes('dependences') && 
+                this.fieldDesc.dependences.values.includes(this.dependencyValues))
+              )
+            ){
+              if(this.fieldDesc.dependences.if.condition == this.dependencyValues){
+                return this.fieldDesc.dependences.if.values.includes(String(this.$store.getters.GET_FIELD_VALUE(this.fieldDesc.dependences.if.field)));
+              }
+            }
+            else
+              result = (!Object.keys(this.fieldDesc).includes('dependences')||(Object.keys(this.fieldDesc).includes('dependences') && this.fieldDesc.dependences.values.includes(this.dependencyValues)))
+          }
+          else{
+            for(let dependency of this.fieldDesc.dependences){
+              if(!dependency.values.includes(this.dependencyValues[dependency.field])) return false;
+            }
+          }
         }
         return result;
       }
-    },
-    mounted(){
     }
   }
 </script>

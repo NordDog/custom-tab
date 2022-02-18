@@ -2,10 +2,29 @@
 
 class otherFunc{
 
-  static function getListItems($listID){
+  static function getItems($type, $string, $entity=0){
+
+    switch($type){
+      case 'iblock_element':
+        $res = self::getListItems($entity, $string);
+        break;
+      case 'crm':
+        $res = self::getCrmEntity($entity, $string);
+        break;
+      case 'employee':
+        $res = self::getEmpls($string);
+        break;
+    }
+
+    return json_encode($res);
+
+  }
+
+  static function getListItems($listID, $string){
 
     $arFilter = array(
-      'IBLOCK_ID'=>$listID
+      'IBLOCK_ID'=>$listID,
+      '%NAME'=>$string
     );
     $arSelect = array(
       'ID',"NAME"
@@ -21,24 +40,42 @@ class otherFunc{
   
   }
 
-  static function getEmpls(){
+  static function getEmpls($string){
     
-    $res = \Bitrix\Main\UserTable::getList(array('select'=>array('ID', 'NAME', 'LAST_NAME')));
+    $res = \Bitrix\Main\UserTable::getList(
+      array(
+        'filter'=>array(
+          'ACTIVE'=>'Y', 
+          '!UF_DEPARTMENT'=>false,
+          array(
+            'LOGIC'=>'OR',
+            array('%NAME'=>$string),
+            array('%LAST_NAME'=>$string)
+          )
+        ),
+        'select'=>array('ID', 'NAME', 'LAST_NAME')
+      )
+    );
+    
     while($ob=$res->fetch()){
       $result[] = array(
         'text' => $ob['NAME'] . ' ' . $ob['LAST_NAME'],
         'value' => $ob['ID']
       );
     }
+
     return $result;
 
   }
 
-  static function getCrmEntity($type){
+  static function getCrmEntity($type, $string){
     
     switch($type){
       case 'LEAD':
-        $res = \Bitrix\Crm\LeadTable::getList(array('select'=>array('ID', 'TITLE')));
+        $res = \Bitrix\Crm\LeadTable::getList(array(
+          'filter'=>array('%TITLE'=>$string),
+          'select'=>array('ID', 'TITLE'))
+        );
         while($ob=$res->fetch()){
           $result[] = array(
             'text'=>$ob['TITLE'],
@@ -47,7 +84,16 @@ class otherFunc{
         }
         break;
       case 'CONTACT':
-        $res = \Bitrix\Crm\ContactTable::getList(array('select'=>array('ID', 'NAME', 'LAST_NAME')));
+        $res = \Bitrix\Crm\ContactTable::getList(array(
+          'filter'=>array(
+            array(
+              'LOGIC'=>'OR',
+              array('%NAME'=>$string),
+              array('%LAST_NAME'=>$string)
+            )
+          ),
+          'select'=>array('ID', 'NAME', 'LAST_NAME'))
+        );
         while($ob=$res->fetch()){
           $result[] = array(
             'text'=>$ob['NAME'] . ' ' . $ob['LAST_NAME'],
@@ -56,7 +102,10 @@ class otherFunc{
         }
         break;
       case 'COMPANY':
-        $res = \Bitrix\Crm\CompanyTable::getList(array('select'=>array('ID', 'TITLE')));
+        $res = \Bitrix\Crm\CompanyTable::getList(array(
+          'filter'=>array('%TITLE'=>$string),
+          'select'=>array('ID', 'TITLE'))
+        );
         while($ob=$res->fetch()){
           $result[] = array(
             'text'=>$ob['TITLE'],
@@ -65,7 +114,10 @@ class otherFunc{
         }
         break;
       case 'DEAL':
-        $res = \Bitrix\Crm\DealTable::getList(array('select'=>array('ID', 'TITLE')));
+        $res = \Bitrix\Crm\DealTable::getList(array(
+          'filter'=>array('%TITLE'=>$string),
+          'select'=>array('ID', 'TITLE'))
+        );
         while($ob=$res->fetch()){
           $result[] = array(
             'text'=>$ob['TITLE'],

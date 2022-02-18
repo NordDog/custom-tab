@@ -20,17 +20,13 @@ class entity{
       $item = $factory->getItem($this->id);
       $res['data'] = $item->getCompatibleData();//getData()
     }
-    /**** */
+
     $allFields = allFieldsFuncs::getAllFields();
-    $res['blocks'] = allFieldsFuncs::cardBuilder('act');
+    $result = allFieldsFuncs::cardBuilder('claim');
+
+    $res['blocks'] = $result['fields'];
     
-    /**** */
-    // $res['blocks'] = $res['data']['CATEGORY_ID'] == 1?
-    //   /*акт*/array_merge($allFields['Акт']['fields'], $allFields['общие']['fields']):
-    //   /*претензия*/array_merge($allFields['Претензия']['fields'], $allFields['общие']['fields']);
-    // $res['btns'] = $res['data']['CATEGORY_ID'] == 1?
-    //   /*акт*/$allFields['Акт']['btns']:
-    //   /*претензия*/$allFields['Претензия']['btns'];
+    $res['items'] = $result['needitems'];//TODO: вот этот массив перебрать, найти итемы этих полей и кинуть их довеском к результу масиивом типа array('UF_CRM_1_'=>array('name'=>Тестовый, 'value'=>2155))
 
     foreach($allFields['fileFields'] as $fileField){
       foreach($res['data'][$fileField] as $fid){

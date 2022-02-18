@@ -43,15 +43,20 @@ class allFieldsFuncs{
       }
       elseif($field['TYPE'] == 'iblock_element'){
         $temp['type'] = 'autocomplete';
-        $temp['items'] = otherFunc::getListItems($field['SETTINGS']['IBLOCK_ID']);
+        //$temp['items'] = otherFunc::getListItems($field['SETTINGS']['IBLOCK_ID']);
+        $temp['realtype'] = $field['TYPE'];
+        $temp['entity'] = $field['SETTINGS']['IBLOCK_ID'];
       }
       elseif($field['TYPE'] == 'employee'){
         $temp['type'] = 'autocomplete';
-        $temp['items'] = otherFunc::getEmpls();
+        $temp['realtype'] = $field['TYPE'];
+        //$temp['items'] = otherFunc::getEmpls();
       }
       elseif($field['TYPE'] == 'crm'){
         $temp['type'] = 'autocomplete';
-        $temp['items'] = otherFunc::getCrmEntity(array_key_first($field['SETTINGS']));
+        $temp['realtype'] = $field['TYPE'];
+        $temp['entity'] = array_keys($field['SETTINGS']);
+        //$temp['items'] = otherFunc::getCrmEntity(array_key_first($field['SETTINGS']));
       }
       elseif($field['TYPE'] == 'double'){
         $temp['type'] = 'string';
@@ -145,6 +150,7 @@ class allFieldsFuncs{
    * забирает все поля, которые созданы в смарт-процессах и выстраивает карточку
    * сортируя блоки и поля, добавляя полям "супер-типы(напр. поле с двумя колонками)"
    * и указывая связь для полей
+   * а так же записывает в поле с привязкой его текущее значение
    */ 
 
   static function cardBuilder($type){//type = 'act'|'claim'
@@ -159,6 +165,8 @@ class allFieldsFuncs{
 
     $allFields = self::getAllFields();
 
+    $needitem = array();
+
     foreach($fieldsarr as $key=>$value){
 
       if(strripos($key, 'UF_CRM_1_') !== false){//обработка поля
@@ -170,6 +178,12 @@ class allFieldsFuncs{
         if(count(array_values($entityField))>0){ //если есть с чем работать
 
           $entityField = array_values($entityField)[0];
+
+          if(in_array('realtype', array_keys($entityField))){
+
+            $needitem[] = $entityField;
+
+          }
 
           if(is_array($value['order'])) $orderedFields[$value['order'][$type]] = array_merge($entityField, $value);
           else $orderedFields[$value['order']] = array_merge($entityField, $value);
@@ -189,6 +203,12 @@ class allFieldsFuncs{
 
             $entityField = array_values($entityField)[0];
 
+            if(in_array('realtype', array_keys($entityField))){
+
+              $needitem[] = $entityField;
+  
+            }
+
             $blockFieldValue = array_merge($entityField, $blockFieldValue);
 
           }
@@ -202,7 +222,13 @@ class allFieldsFuncs{
     
     }
 
-    return $orderedFields;
+      $result = array(
+        'fields' => $orderedFields,
+        'needitems' => $needitem,
+      );
+
+
+    return $result;
 
   }
 

@@ -16,6 +16,7 @@ CModule::IncludeModule('main');
 
 require_once($_SERVER['DOCUMENT_ROOT'] . "/local/custom-tab/fields.php");
 require_once("./entity.php");
+require_once("./help.php");
 
 switch($_REQUEST['action']){
   case 'getAllFields':
@@ -28,6 +29,9 @@ switch($_REQUEST['action']){
     break;
   case 'create':
     entity::create($_REQUEST['type'], $_REQUEST['fields']);
+    break;
+  case 'getItems':
+    $res = otherFunc::getItems($_REQUEST['type'], $_REQUEST['string'], $_REQUEST['entity']);
     break;
 }
 
