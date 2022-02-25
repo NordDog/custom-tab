@@ -72,6 +72,9 @@ export default {
     ...mapGetters({
       readOnly:'GET_READONLY'
     })
+  },
+  mounted(){
+    this.items = this.$store.getters.GET_CURR_VALUE(this.fieldData.code);
   }
 }
 </script>

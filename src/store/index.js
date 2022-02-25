@@ -6,21 +6,25 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    testFields:[//TODO:name - название поля в битрикс, text - название поля в интерфейсе
+    fields:[
     ],
     buttonPanel: {
     },
     selectedBtn: 1,
     data: {},
     readOnly: true,
-    files:{}
+    show: false,
+    files:{},
+    currSelectValues:[],
+    snackbar:false,
+    entity:''
   },
   mutations: {
     CHANGE_SELECTED_BTN_IN_STATE(state, val){
       state.selectedBtn = val;
     },
     SET_FIELDS(state, fields){
-      state.testFields = fields;
+      state.fields = fields;
     },
     SET_BTNPNL(state, btns){
       state.buttonPanel = btns;
@@ -40,6 +44,24 @@ export default new Vuex.Store({
     ADD_FILES(state, data){
       state.files[data.name] = data.value;
       //this.$set(state.files, data.name, data.value);
+    },
+    SET_CURR_SELECT_VALUES(state, data){
+      state.currSelectValues = data;
+    },
+    ADD_ROW(state, field){
+      state.data[field].push('/');
+    },
+    CANCEL_CHANGES(state){
+      state.data = state.oldData;
+    },
+    SHOW_TOGGLE(state){
+      state.show = state.show?false:true;
+    },
+    SHOW_SNACKBAR(state){
+      state.snackbar = true;
+    },
+    SET_ENTITY(state, value){
+      state.entity=value;
     }
   },
   actions: {
@@ -49,20 +71,42 @@ export default new Vuex.Store({
     async GET_ALL_FIELDS_FROM_SERVER({commit}){
       let id = window.location.href.split('/').reverse()[1];
       let data = new FormData();
+      if(id == 0){
+        commit('READONLY_TOGGLE');
+        var url = new URL(window.location.href);
+        var entity = url.searchParams.get("categoryId");
+        console.log(entity);
+        if(entity == 2){
+          commit('SET_ENTITY', 'claim');
+          data.append('entity', 'claim');
+        }
+        else{
+          commit('SET_ENTITY', 'act');
+          data.append('entity', 'act')
+        }
+      }
       data.append('key', 'j1xTeoRyYZUlf6J9qm7S8hz9vEQWOUcc');
       data.append('action', 'getAllFields');
       data.append('id', id);
       axios({
         method:'post',
-        url:'https://spets.company/local/custom-tab/ajax.php',
+        url:'https://btrx.site/local/custom-tab/ajax.php',
         data,
         headers:{
           'Content-Type':'application/x-www-form-urlencoded'
         }
       }).then(response=>{
         commit('SET_FIELDS', response.data.blocks);
-        /*if(id > 0)*/commit('SET_DATA', response.data.data);
+        commit('SET_DATA', response.data.data);
+        if(id > 0){
+          if(response.data.entity) commit('SET_ENTITY', response.data.entity);
+        }
         //commit('AUTOSELECT_TAB', String(response.data.data[response.data.btns.code]));//TODO: переписать 
+        commit('SET_CURR_SELECT_VALUES', response.data.items);
+        let elements = document.getElementsByClassName('ui-entity-section', 'ui-entity-section-control');
+        if(elements.length > 0){
+          elements[0].style = 'display:none;'
+        }
       });
     },
     FIELD_VALUE_SETTER({commit}, data){
@@ -71,13 +115,25 @@ export default new Vuex.Store({
     TOGGLE({commit}){
       commit('READONLY_TOGGLE');
     },
+    DIALOG_TOGGLE({commit}){
+      commit('SHOW_TOGGLE');
+    },
     FILE_FIELD_VALUE_SETTER({commit}, data){
       commit('ADD_FILES', data);
+    },
+    ADDROW({commit}, data){
+      commit('ADD_ROW', data.val);
+    },
+    CANCEL_CHANGES({commit}){
+      commit('CANCEL_CHANGES');
+    },
+    SHOW_SNACKBAR({commit}){
+      commit('SHOW_SNACKBAR');
     }
   },
   getters: {
     GET_ALL_FIELDS(state){
-      return state.testFields;
+      return state.fields;
     },
     GET_BUTTONS_FOR_PANEL(state){
       return state.buttonPanel;
@@ -96,15 +152,18 @@ export default new Vuex.Store({
     },
     GET_FILES(state){
       return state.files;
+    },
+    GET_CURR_VALUE: state=>fieldName=>{
+      return state.currSelectValues[fieldName];
+    },
+    GET_SHOW_DIALOG(state){
+      return state.show;
+    },
+    GET_SNACKBAR(state){
+      return state.snackbar;
+    },
+    GET_ENTITY(state){
+      return state.entity;
     }
   }
 })
-/** DESCRIPTION
- * поля могут иметь привязку
- *  тогда они отображаются только на выделенных табах
- * или не иметь привязку
- *  тогда они отображаются все время
- * TODO:при создании полей можно указать привязку к табу
- * набор табов зависит от типа сущности 
- * TODO:придумать как разводить, какой таб, к какой сущности относится
- */

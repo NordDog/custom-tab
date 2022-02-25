@@ -1,15 +1,16 @@
 <template>
-  <div class="position:relative;">
+  <div style="position:relative;">
     <v-text-field
       :label="fieldData.title"
       v-model="value[0]"
       dense
       outlined
+      :type="fieldType"
       background-color="white"
       @input="setNewVal"
       :readonly='readOnly'
     ></v-text-field>
-    <div v-if="value.length > 1">
+    <div v-if="value.length > 0">
       <v-text-field v-for="num of value.length-1" :key='num' 
         class="mwsaddit"
         v-model="value[num]"
@@ -19,14 +20,13 @@
         @input="setNewVal"
         :readonly='readOnly'
       ></v-text-field>
+    </div>
       <p 
-        v-if="fieldData.multiple && !readOnly"
+        v-if="showadd"
         class="fakelink" 
         @click="value.push([])">
         добавить
       </p>
-    </div>
-
   </div>
 </template>
 
@@ -53,11 +53,17 @@
             result = res;
           }
           return result; 
-        },
+        }
       },
       ...mapGetters({
         readOnly:'GET_READONLY'
-      })
+      }),
+      showadd(){
+        return this.fieldData.multiple && !this.readOnly
+      },
+      fieldType(){
+        return this.fieldData.advancedType == 'double'?"number":'srting';
+      }
     },
     methods:{
       setNewVal(){

@@ -9,6 +9,7 @@
         @click="setValue(option.ID)"
         class="pa-0 ma-0"
         style="margin-bottom: -10px;"
+        :readonly='readOnly'
       ></v-switch>
     </div>
     <v-select
@@ -44,18 +45,13 @@ export default {
       for(let item in this.values){
         if(val!=item) this.values[item] = false;
       }
+      this.$store.dispatch('FIELD_VALUE_SETTER', {name:this.fieldData.code, value: val});
     }
   },
   computed:{
     value:{
       get(){
-        if(this.fieldData.code !== 'UF_CRM_1_1642579806'){
-          return String(this.$store.getters.GET_FIELD_VALUE(this.fieldData.code));
-        }else{
-          let temp = String(this.$store.getters.GET_FIELD_VALUE(this.fieldData.code));
-          this.$set(this.values, temp, true);
-          return true;
-        }
+        return String(this.$store.getters.GET_FIELD_VALUE(this.fieldData.code));
       },
       set(val){
         this.$store.dispatch('FIELD_VALUE_SETTER', {name:this.fieldData.code, value: val});
@@ -64,6 +60,12 @@ export default {
     ...mapGetters({
       readOnly:'GET_READONLY'
     })
+  },
+  mounted(){
+    if(this.fieldData.code == 'UF_CRM_1_1642579806'){
+      let temp = String(this.$store.getters.GET_FIELD_VALUE(this.fieldData.code));
+      this.$set(this.values, temp, true);
+    }
   }
 }
 </script>

@@ -106,14 +106,14 @@ $tabs = array(
             )
           )
         ),
-        'UF_CRM_1_1642999691' => array( //менеджер - сумма
+        'UF_CRM_1_1643089442' => array( //менеджер - сумма
           'order' => 6,
           'advancedType'=>array(
             'type'=>'app_row',
             'cells'=>array(
               array(
                 'fieldType'=>'autocomplete',
-                'items'=>'employers',
+                'items'=>'employee',
                 'cols'=>2
               ),
               array(
@@ -139,7 +139,8 @@ $tabs = array(
             'cells'=>array(
               array(
                 'fieldType'=>'autocomplete',
-                'items'=>'IBLOCK_ID:36',
+                'items'=>'iblock_element',
+                'entity'=>36,
                 'cols'=>2
               ),
               array(

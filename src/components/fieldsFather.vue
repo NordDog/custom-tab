@@ -19,6 +19,7 @@
   import app_file from "./fields/app_file";
   import app_switch from "./fields/app_switch";
   import app_row from "./fields/app_row";
+  import double from "./fields/double";
   
   export default {
     name: 'fieldsFather',
@@ -31,7 +32,8 @@
       app_select,
       app_file,
       app_switch,
-      app_row
+      app_row,
+      double
     },
     props:{
       fieldDesc: Object,
@@ -48,6 +50,7 @@
           app_file: {content: 'app_file', props:{fieldData: this.fieldDesc}},
           app_switch: {content: 'app_switch', props:{fieldData: this.fieldDesc}},
           app_row: {content: 'app_row', props:{fieldData: this.fieldDesc}},
+          double: {content: 'double', props:{fieldData: this.fieldDesc}},
         }
       }
     },
@@ -68,6 +71,7 @@
       },
       show(){
         let result = true;
+        if(typeof this.dependencyValues == 'string' && this.dependencyValues.length == 0) return false;
         if(Object.keys(this.dependencyValues).length !== 0){
           if(typeof this.dependencyValues != 'object'){
             if(Object.keys(this.fieldDesc.dependences).includes('if') &&

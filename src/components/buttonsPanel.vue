@@ -7,7 +7,8 @@
       @click="changeBtnValue(btn.ID)" 
       :style="{width: autoWidth}"
       :disabled='readOnly'
-      :class="{mvshov: !readOnly}"
+      :class="{mvshov: !readOnly, mwsbtn: entity=='claim'}"
+      :title="btn.VALUE"
     >
       {{btn.VALUE}}
     </button>
@@ -34,8 +35,14 @@ export default {
       return 100/this.buttons.length+'%';
     },
     ...mapGetters({
-      readOnly:'GET_READONLY'
+      readOnly:'GET_READONLY',
+      entity:'GET_ENTITY'
     })
+  },
+  mounted(){
+    let value = String(this.$store.getters.GET_FIELD_VALUE(this.code));
+    this.$store.dispatch('FIELD_VALUE_SETTER', {name:this.code, value: value});
+    this.$store.dispatch('CHANGE_SELECTED_BTN', {val: value});
   }
 }
 </script>
@@ -72,5 +79,10 @@ export default {
   }
   .mwsbtn-group{
     margin-bottom: 20px;
+  }
+  .mwsbtn{
+    overflow: hidden;
+    padding: 0 !important;
+    height: 62px;
   }
 </style>
