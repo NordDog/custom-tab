@@ -6,7 +6,7 @@
         :key="option.ID"
         v-model="values[option.ID]"
         :label="option.VALUE"
-        @click="setValue(option.ID)"
+        @click="setValue()"
         class="pa-0 ma-0"
         style="margin-bottom: -10px;"
         :readonly='readOnly'
@@ -41,30 +41,40 @@ export default {
     }
   },
   methods:{
-    setValue(val){
+    setValue(){
+      let res = [];
       for(let item in this.values){
-        if(val!=item) this.values[item] = false;
+        if(this.values[item] == true){
+          res.push(item);
+        }
       }
-      this.$store.dispatch('FIELD_VALUE_SETTER', {name:this.fieldData.code, value: val});
+      console.log(res);
+      this.$store.dispatch('FIELD_VALUE_SETTER', {name:this.fieldData.code, value: res});
     }
   },
   computed:{
-    value:{
-      get(){
-        return String(this.$store.getters.GET_FIELD_VALUE(this.fieldData.code));
-      },
-      set(val){
-        this.$store.dispatch('FIELD_VALUE_SETTER', {name:this.fieldData.code, value: val});
-      }
-    },
+    // value:{
+    //   get(){
+    //     let res = [], items = this.$store.getters.GET_FIELD_VALUE(this.fieldData.code);
+    //     for(let item in items){
+    //       this.$set(res, item, true);
+    //     }
+    //     return res;
+    //   },
+    //   set(val){
+    //     this.$store.dispatch('FIELD_VALUE_SETTER', {name:this.fieldData.code, value: val});
+    //   }
+    // },
     ...mapGetters({
       readOnly:'GET_READONLY'
     })
   },
   mounted(){
     if(this.fieldData.code == 'UF_CRM_1_1642579806'){
-      let temp = String(this.$store.getters.GET_FIELD_VALUE(this.fieldData.code));
-      this.$set(this.values, temp, true);
+      let items = this.$store.getters.GET_FIELD_VALUE(this.fieldData.code);
+      for(let item of items){
+        this.$set(this.values, item, true);
+      }
     }
   }
 }

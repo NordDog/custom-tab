@@ -37,6 +37,13 @@ export default {
   methods:{
     getItems: debounce(function (e){
 
+      if(!e) return;
+
+      if(this.items){
+        let check = this.items.filter(item=>item.text == e);
+        if(check.length > 0) return
+      }
+
       this.isLoading = true;
 
       let data = new FormData();
@@ -49,7 +56,7 @@ export default {
 
       axios({
         method:'post',
-        url:'https://spets.company/local/custom-tab/ajax.php',
+        url:'https://btrx.site/local/custom-tab/ajax.php',
         data,
         headers:{
           'Content-Type':'application/x-www-form-urlencoded'

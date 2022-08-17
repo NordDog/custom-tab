@@ -65,7 +65,8 @@ export default {
         temp.push(row.join('/'));
       }
       this.$store.dispatch('FIELD_VALUE_SETTER', {name:this.fieldData.code, value: temp});
-      
+      console.log(temp);
+
     },1000),
     getItems: debounce(function (e, cell){
 
@@ -83,7 +84,7 @@ export default {
 
       axios({
         method:'post',
-        url:'https://spets.company/local/custom-tab/ajax.php',
+        url:'https://btrx.site/local/custom-tab/ajax.php',
         data,
         headers:{
           'Content-Type':'application/x-www-form-urlencoded'
@@ -110,21 +111,25 @@ export default {
     value:{
       get(){
 
-        let res =  this.$store.getters.GET_FIELD_VALUE(this.fieldData.code), result=[];
-        
-        if(!Array.isArray(res)){
-          
-          if(res.length == 0)
-            result = Array(Array(''));
-          else result.push(res.split('/'));
-          
-          return result;
-        }
+        let res =  this.$store.getters.GET_FIELD_VALUE(this.fieldData.code), result=Array(Array('',0));
+        if(res){
+          if(!Array.isArray(res)){
+            
+            if(res.length == 0)
+              result = Array(Array('',0));
+            else {
+              result = [];
+              result.push(res.split('/'));
+              }
+            
+            return result;
+          }
 
-        for(let row of res){
-          result.push(row.split('/'));
+          result = [];
+          for(let row of res){
+            result.push(row.split('/'));
+          }
         }
-        
         return result;
         
       }

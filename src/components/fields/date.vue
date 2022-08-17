@@ -1,6 +1,6 @@
 <template>
   <div>      
-    <v-menu
+    <!-- <v-menu
         v-if="fieldData.code == 'UF_CRM_1_1642580451'"
         disabled
         v-model="menu"
@@ -32,9 +32,8 @@
           first-day-of-week="1"
         >
         </v-date-picker>
-      </v-menu>
-      <v-menu
-        v-else
+    </v-menu> -->
+    <v-menu
         :disabled='readonly'
         v-model="menu"
         :close-on-content-click="false"
@@ -65,7 +64,7 @@
           first-day-of-week="1"
         >
         </v-date-picker>
-      </v-menu>
+    </v-menu>
   </div>
 </template>
 
@@ -89,13 +88,15 @@ export default {
   computed:{
     date:{
       get(){
-        if(this.fieldData.code == 'UF_CRM_1_1642580451'){
-          return this.$store.getters.GET_FIELD_VALUE('BEGINDATE').split('.').reverse().join('-');
-        }
-        return this.$store.getters.GET_FIELD_VALUE(this.fieldData.code) ? 
-          this.$store.getters.GET_FIELD_VALUE(this.fieldData.code).split('.').reverse().join('-'):'';
+        // if(this.fieldData.code == 'UF_CRM_1_1642580451'){
+        //   let temp = this.$store.getters.GET_FIELD_VALUE('BEGINDATE');
+        //   return temp ? temp.split('.').reverse().join('-') : '';
+        // }
+        let temp = this.$store.getters.GET_FIELD_VALUE(this.fieldData.code);
+        return temp ? temp.split('.').reverse().join('-') : '';
       },
       set(val){
+        console.log(this.fieldData.code)
         this.$store.dispatch('FIELD_VALUE_SETTER', {name:this.fieldData.code, value: val.split('-').reverse().join('.')});
       }
     },

@@ -17,7 +17,8 @@ export default new Vuex.Store({
     files:{},
     currSelectValues:[],
     snackbar:false,
-    entity:''
+    entity:'',
+    id: 0
   },
   mutations: {
     CHANGE_SELECTED_BTN_IN_STATE(state, val){
@@ -62,6 +63,9 @@ export default new Vuex.Store({
     },
     SET_ENTITY(state, value){
       state.entity=value;
+    },
+    SET_ENTITY_ID(state, id){
+      state.id = id;
     }
   },
   actions: {
@@ -71,11 +75,11 @@ export default new Vuex.Store({
     async GET_ALL_FIELDS_FROM_SERVER({commit}){
       let id = window.location.href.split('/').reverse()[1];
       let data = new FormData();
+      commit('SET_ENTITY_ID', id);
       if(id == 0){
         commit('READONLY_TOGGLE');
         var url = new URL(window.location.href);
         var entity = url.searchParams.get("categoryId");
-        console.log(entity);
         if(entity == 2){
           commit('SET_ENTITY', 'claim');
           data.append('entity', 'claim');
@@ -154,7 +158,7 @@ export default new Vuex.Store({
       return state.files;
     },
     GET_CURR_VALUE: state=>fieldName=>{
-      return state.currSelectValues[fieldName];
+      return state.currSelectValues?state.currSelectValues[fieldName]:[];
     },
     GET_SHOW_DIALOG(state){
       return state.show;
@@ -164,6 +168,9 @@ export default new Vuex.Store({
     },
     GET_ENTITY(state){
       return state.entity;
+    },
+    GET_ENTITY_ID(state){
+      return state.id;
     }
   }
 })

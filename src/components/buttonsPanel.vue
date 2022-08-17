@@ -2,9 +2,10 @@
   <div class="mwsbtn-group">
     <button 
       v-for="btn of buttons" 
-      :key="btn.ID" 
+      :key="btn.ID"
+      :id="btn.ID"
       small 
-      @click="changeBtnValue(btn.ID)" 
+      @click="changeBtnValue($event, btn.ID)" 
       :style="{width: autoWidth}"
       :disabled='readOnly'
       :class="{mvshov: !readOnly, mwsbtn: entity=='claim'}"
@@ -24,7 +25,12 @@ export default {
     code: String
   },
   methods:{
-    changeBtnValue(val){
+    changeBtnValue(e, val){
+      e.path[1].childNodes.forEach(element => {
+        console.log(element);
+        element.classList.remove('selectedbtn')
+      });
+      e.path[0].classList.add('selectedbtn');
       this.btn = val;
       this.$store.dispatch('FIELD_VALUE_SETTER', {name:this.code, value: val});
       this.$store.dispatch('CHANGE_SELECTED_BTN', {val: val});
@@ -43,6 +49,8 @@ export default {
     let value = String(this.$store.getters.GET_FIELD_VALUE(this.code));
     this.$store.dispatch('FIELD_VALUE_SETTER', {name:this.code, value: value});
     this.$store.dispatch('CHANGE_SELECTED_BTN', {val: value});
+    let selected = document.getElementById(value);
+    selected.classList.add('selectedbtn');
   }
 }
 </script>
@@ -84,5 +92,8 @@ export default {
     overflow: hidden;
     padding: 0 !important;
     height: 62px;
+  }
+  .selectedbtn{
+    background: #616161 !important;
   }
 </style>

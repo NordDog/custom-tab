@@ -72,6 +72,13 @@
       show(){
         let result = true;
         if(typeof this.dependencyValues == 'string' && this.dependencyValues.length == 0) return false;
+
+        else if(typeof this.dependencyValues == 'string' && this.dependencyValues.length != 0){
+          if(this.dependencyValues.includes(this.fieldDesc.dependences.values[0])) {
+            return true;
+          }
+        }
+
         if(Object.keys(this.dependencyValues).length !== 0){
           if(typeof this.dependencyValues != 'object'){
             if(Object.keys(this.fieldDesc.dependences).includes('if') &&

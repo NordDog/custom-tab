@@ -56,7 +56,7 @@ export default {
       //data.append('files', this.files);
       axios({
         method:'post',
-        url:'https://spets.company/local/custom-tab/ajax.php',
+        url:'https://btrx.site/local/custom-tab/ajax.php',
         data,
         headers:{
           'Content-Type':'application/x-www-form-urlencoded'
